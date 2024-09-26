@@ -1,0 +1,53 @@
+version: '3'
+services:
+  # frontend:
+  #   build:
+  #     context: ./front-React
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - 3000:3000
+  #   networks:
+  #     - crm_app-network
+
+  backend:
+    build:
+      context: ./backend_flask_app
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000
+    environment:
+      - FLASK_CONFIG=production
+      - MONGO_USER=doviaristide
+      - MONGO_PASSWORD=gSHe1iNVBi1bbAXr
+    networks:
+      - crm_app-network
+
+  nextjs-app:
+    build:
+      context: ./front-next-app
+      dockerfile: Dockerfile
+      #args:
+        #NEXT_PUBLIC_FLASK_PUBLIC_API_URL: ${NEXT_PUBLIC_FLASK_PUBLIC_API_URL}  # Pass the env var to the build
+        #NEXT_PUBLIC_FLASK_PUBLIC_URL: ${NEXT_PUBLIC_FLASK_PUBLIC_URL}  # Pass the env var to the build
+    ports:
+      - "3000:3000"
+    #env_file:
+      #- ./front-next-app/.env  # Explicitly load the .env file
+    #environment:
+      #NEXT_PUBLIC_API_URL: http://your-api-url # Replace with your API URL
+      #- NEXT_PUBLIC_FLASK_PUBLIC_API_URL=http://backend:5000/api/v1
+      #- NEXT_PUBLIC_FLASK_PUBLIC_API_URL=${NEXT_PUBLIC_FLASK_PUBLIC_API_URL:-http://localhost:5000/api/v1}
+      #- NEXT_PUBLIC_FLASK_PUBLIC_URL=http://backend:5000/
+      #- NEXT_PUBLIC_FLASK_PUBLIC_URL=${NEXT_PUBLIC_FLASK_PUBLIC_URL:-http://localhost:5000}
+    volumes:
+      - ./front-next-app:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - backend  # Ensures this service starts after the backend service
+    networks:
+      - crm_app-network
+
+networks:
+  crm_app-network:
+    driver: bridge
