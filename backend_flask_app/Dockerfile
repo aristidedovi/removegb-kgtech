@@ -19,6 +19,8 @@ EXPOSE 5000
 # Set the environment variable for Flask
 ENV FLASK_CONFIG='production'
 
+RUN python3 test_flaskr.py
+
 # Run the Flask app when the container starts
 #CMD ["flask", "run", "--host=0.0.0.0", "--cert=cert.pem", "--key=key.pem"] 
 CMD ["flask", "run", "--host=0.0.0.0"]         
